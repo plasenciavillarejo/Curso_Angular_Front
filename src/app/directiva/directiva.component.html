@@ -1,0 +1,21 @@
+
+<!-- Ocultamos o no utilizando (click) donde habilitar se ha definido en la directiva.component.ts-->
+<button type="button" class="btn btn-primary my-3" (click)="setHabilitar()">
+    {{ habilitar==true? 'Ocultar':'Mostrar'}}
+</button>
+
+<div class="card">
+    <div class="card-header">
+        Listado de Cursos
+    </div>
+
+    <!-- Utilizamos la condición *ngIf -->
+    <ul class="list-group" *ngIf="habilitar">
+        <!-- Iteramos utilizando la directiva *ngFor-->
+        <li class="list-group-item" *ngFor="let cursos of listaCurso">
+            {{cursos}}
+        </li>
+    </ul>
+</div>
+
+
