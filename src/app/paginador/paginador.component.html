@@ -1,0 +1,38 @@
+<nav aria-label=".." class="d-flex justify-content-center">
+    <ul class="pagination" *ngIf="paginas?.length >0">    
+      
+      <li class="page-item" *ngIf="paginador.number > 0">
+         <a class="page-link" [routerLink]="['/clientes/page',paginador.number-1]">&laquo;</a>
+      </li>   
+
+      <li class="page-item" [ngClass]="paginador.first?'disabled page-item':'page-item'">
+        <a class="page-link" [routerLink]="['/clientes/page',0]">Primera</a>
+     </li>
+
+      <li class="page-item " *ngFor="let pagina of paginas">
+        
+        <!-- Si la pagina 0 es igual al paginador.number 'Se encuentra dentro de paginador.componte.ts' entonces lo desactivamos 
+          Directiva ngClass-> [ngClass]="pagina-1 == paginador.number?'disabled':''
+        -->
+        <span class="page-link active" *ngIf="pagina-1 == paginador.number" disabled>{{pagina}}</span>
+
+        <!-- Los Links en angular se implementa con [routerLink] ="'link','valor de link'"
+          1º Argumento -> Es la url de nuestro componente
+          2º Argumento -> Le tenemos que pasr el número de página, recordar que el BE envía como primer número el 0, por tanto tenemos que indicarle inicialmente '-1'
+            La primera página sería el 0 en el BE en el Front sería la 1.
+            La segunda página sería el 1 en el BE en el Front sería la 2.
+        -->
+        <a class="page-link" *ngIf="pagina-1 != paginador.number" [routerLink]="['/clientes/page',pagina-1]"> {{pagina}}</a>
+      </li>
+                                        
+      <li class="page-item" [ngClass]="paginador.last?' disabled page-item': 'page-item'">
+        <a class="page-link" [routerLink]="['/clientes/page',paginador.totalPages-1]">Última</a>
+     </li>
+     
+     <li class="page-item" *ngIf="paginador.number < paginador.totalPages-1">
+      <a class="page-link" [routerLink]="['/clientes/page',paginador.number+1]">&raquo;</a>
+     </li>
+
+
+    </ul>
+  </nav>

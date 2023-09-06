@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Cliente } from './cliente';
 import { ClienteService } from './cliente.service';
 import Swal from 'sweetalert2';
+import * as $ from 'jquery';
+import { ComponentesService } from '../componentes/componentes.service';
+import { ActivatedRoute } from '@angular/router';
+import { pipe, tap } from 'rxjs';
 
 @Component({
   selector: 'app-clientes',
@@ -10,19 +14,74 @@ import Swal from 'sweetalert2';
 export class ClientesComponent implements OnInit {
 
   clientes!: Cliente[];
-
+  
+  // Varible para el paginador
+  paginador: any;
+  
+  
+  
   // Cuando se realiza inyección de dependencias se debe pasar mediante el constructor para poder utilizarlo dentro de el componente
-  constructor(private clienteService: ClienteService){
+  constructor(private clienteService: ClienteService,
+    private componenteServicio: ComponentesService,
+    private activatedRoute: ActivatedRoute){
 
   }
 
   ngOnInit(): void {
     /* Asignamos nuestra clase inyectada en el constructor para devolver los clientes, al utilzar Observable esté método se cambia
     this.clientes = this.clienteService.getClientes(); -> this.clienteService.getClientes().subs;
+    
+    Nota: Entendimiento de Página Inicial con listado:
+      - 1.- Por defecto le hemos indicado que nos cargue la primera página el modulo de clientes.components.ts. Nosotros en la carga inicial 'ngOnInit()' le hemos indicado que nos haga 
+      una consulta al BE utilizando inicialmente el -> 1.- Lista Completa. 
+      - 2.- Ahora hemos integrado la paginación desde el BE por tanto la indicamos. Inicialmente cargara nuestra lista paginada.
+      - 3.- Se comenta el listado inicial
+    
     */
+
+    /* 1.- Lista Completa
     this.clienteService.getClientes().subscribe(
       clientesRecibidosBE => this.clientes = clientesRecibidosBE
     );
+    */
+    
+    /* 1.- Lista Paginada - Debemos agregar el page desde el app.module.ts -> :page
+       Agregamos el ActivatedRoute que se encarga de Observa el cambio de el parámetro para realizar la paginación, cuando cambia el parámetro debe cambiar en el paginador para poder navegar
+    */    
+    this.activatedRoute.paramMap.subscribe( params => {
+      // Debemos convertir el String a Number para indicar la página, con el operador + lo convierte directamente a un int
+      // Con el param.get('') -> Podemos obtener el page que se está enviado desde la url
+      let page:number = +params.get('page');
+      // Lá primera página es siempre 0
+      if(!page){
+        page = 0;
+      }
+     this.clienteService.getClientesPaginados(page)
+     .pipe(
+        tap(response => {
+          console.log('ClientesComponent: tap 3');
+          (response.content as Cliente[]).forEach(cliente => console.log(cliente.nombre));
+        })).subscribe(response => {
+            this.clientes = response.content as Cliente[];
+            this.paginador = response;
+          });
+      });
+        
+        
+    $(document).on('click', '#botonJqueryPrueba', function() {
+      Swal.fire('Boton Pulsado mediante función Jquery', 'Congratulation!! Integracíon perfecta con Angular', 'success');
+    });
+
+    /*
+    $(document).on('click', '#validarBoton', function() {        
+      let nombreBoton = $('#validarBoton').text();
+      if(nombreBoton == 'Editar Cliente') {
+        $('.clientCrear').text('Editar Cliente');
+      }
+    });
+    */
+
+
   }
 
 
@@ -53,5 +112,10 @@ public delete(cliente: Cliente):void {
     }
   })
 }
+
+onEditClick(): void {
+  this.componenteServicio.setButtonText('Editar Cliente');
+}
+
 
 }

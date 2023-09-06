@@ -1,3 +1,7 @@
+<div class="mb-4">
+  <button class="btn btn-primary" id="botonJqueryPrueba">Prueba Jquery</button>
+</div>
+
 <div class="card border-primary mb-3">
     <div class="card-header">Clientes</div>
     <div class="card-body text-primary">
@@ -29,7 +33,7 @@
                 <td>{{cliente.puerto}}</td>
                 <td>{{cliente.createAt}}</td>
                 <td>
-                  <button type="button" class="btn btn-primary" name="editar" [routerLink]="['/crear/clientes/',cliente.id]"> Editar Producto</button>
+                  <button (click)="onEditClick()" id="botonEditar" type="button" class="btn btn-primary" name="editar" [routerLink]="['/crear/clientes/',cliente.id]">Editar Producto</button>
                 </td>
                 <td>
                   <button type="button" class="btn btn-primary" name="eliminar" (click)="delete(cliente)"> Eliminar Producto</button>
@@ -37,6 +41,16 @@
             </tr>
         </tbody>
       </table>
+
+      <!-- Agregamos el componente paginador 
+        Vamos a utilizar la forma de inyección de dependencias donde:
+          [paginador] -> Corresponde al objeto creado en paginador.component.ts
+          "paginador" -> Corresponde al padre que está en clientes.component.ts
+
+        Inicialmente tenemos que validar que el paginador exista dado que son métodos asíncronos y el componente padre debe de estár cargado para heredarlo el componente hijo e inyectarlo
+          *ngIf="paginador" -> De está forma mientras sea false seguira esperando hasta que sea true para visualizar el paginador
+      -->
+      <paginador-nav *ngIf="paginador" [paginador]="paginador"></paginador-nav>
 
     </div>
   </div>

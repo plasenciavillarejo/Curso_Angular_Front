@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CLIENTES } from './clientes.json';
 import { Cliente } from './cliente';
-import { Observable, catchError, of, pipe, throwError} from 'rxjs';
+import { Observable, catchError, of, pipe, throwError, map} from 'rxjs';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 
@@ -23,11 +23,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class ClienteService {
 
   // Nota: el puerto es dinámico por lo que cada vez que levante el BE contiene un puerto diferente
-  private urlEndPoint: string = "http://localhost:62413/listar";
-  private urlCrearEndPoint: string = "http://localhost:62413/crear";
-  private urlBuscarIdProductoEndPoint: string = "http://localhost:62413/ver";
-  private urlActualizarProductoEndPoint: string = "http://localhost:62413/editar";
-  private urlBorrarProductoEndPoint: string = "http://localhost:62413/eliminar";
+  private urlEndPoint: string = "http://localhost:57139/listar";
+  private urlCrearEndPoint: string = "http://localhost:57139/crear";
+  private urlBuscarIdProductoEndPoint: string = "http://localhost:57139/ver";
+  private urlActualizarProductoEndPoint: string = "http://localhost:57139/editar";
+  private urlBorrarProductoEndPoint: string = "http://localhost:57139/eliminar";
+  private urlListadoPaginadoEndPoint: string = "http://localhost:57139/listar/page/";
 
   // Cabeceras http
   private httpHeaders = new HttpHeaders({
@@ -37,9 +38,9 @@ export class ClienteService {
   constructor(private http: HttpClient,
     private router: Router) { }
   
-  /* Obtenemos los clientes recibido de el BE. Ahora mismo es un método sincrono, lo mejor sería hacerlo Asincrono utilizando los Observables de RxJs.
+  /* Obtenemos los clientes completa recibido de el BE. Ahora mismo es un método sincrono, lo mejor sería hacerlo Asincrono utilizando los Observables de RxJs.
     Síncrono: Cliente[] {
-    Asíncrono: Observable<Cliente[]> {
+    Asíncrono: Observable<Cliente[]>
   */
   getClientes(): Observable<Cliente[]> {
     // Convertimos nuestro listado clientes en un Observable
@@ -49,14 +50,27 @@ export class ClienteService {
     return this.http.get<Cliente[]>(this.urlEndPoint);
   }
 
+  /* Lista Paginada 
+      1.- Debemos cambiar el observalbe por 'any' ya que vamos a recibir un json que contiene un atributo content con el producto y más atributos 
+        Observable<any>
+      2.- 
+  */
+  getClientesPaginados(page:number): Observable<any> { // Indicar que el Observable devuelve un array de Cliente
+    return this.http.get(this.urlListadoPaginadoEndPoint + page).pipe(
+      map((response: any) => {
+        return response; // Transformar la respuesta al tipo deseado content as Cliente[]
+      })
+    );
+  }     
   createClient(cliente:Cliente): Observable<Cliente> {
     return this.http.post<Cliente>(this.urlCrearEndPoint, cliente, {
       headers: this.httpHeaders
     }).pipe(
       catchError (errorCapturadoDesdeBE => {
         this.router.navigate(['/crear/clientes']);
-        console.log(errorCapturadoDesdeBE.error.mensaje)
-          Swal.fire('Error al crear', errorCapturadoDesdeBE.error.mensaje, 'error' );
+        // Se pasa el errors[0] ya que desde el BE se está pasando un map y el error se encuentra en la posición 0 de el array.
+        console.log(errorCapturadoDesdeBE.error.errors[0])
+          Swal.fire('Error al crear', errorCapturadoDesdeBE.error.errors[0], 'error' );
           return throwError(
             () => errorCapturadoDesdeBE
             );
@@ -71,7 +85,7 @@ export class ClienteService {
       // Obtiene el error que se recibe por argumento a traves de la repuesta de estado de el BE
       catchError (errorCapturadoDesdeBE => {
         this.router.navigate(['/clientes']);
-        console.log(errorCapturadoDesdeBE.error.mensaje)
+        console.log(errorCapturadoDesdeBE.error.errors)
           Swal.fire('Error al editar', errorCapturadoDesdeBE.error.mensaje, 'error' );
           return throwError(
             () => errorCapturadoDesdeBE

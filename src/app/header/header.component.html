@@ -11,15 +11,19 @@
           </li>
           <!-- Cada vez que seleccionemos esta ruta, se va a seleccionar gracias al routerLinkActive="active " -->
           <li class="nav-item rounded" routerLinkActive="active">
-            <a class="nav-link" routerLink="/directivas">Directivas</a>
+            <a id="validarBoton" class="nav-link" routerLink="/directivas">Directivas</a>
           </li>
 
           <li class="nav-item rounded" routerLinkActive="active">
-            <a class="nav-link" routerLink="/clientes">Clientes</a>
+            <a id="validarBoton" class="nav-link" routerLink="/clientes">Clientes</a>
           </li>
 
+          <!-- Validar el boton para que al pulsar el Editar salga correctamente -->
+          <!--                        PLASENCIA                                  -->
+          <!-- ################################################################# -->
+
           <li class="nav-item rounded" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/crear/clientes']">Crear Cliente</a>
+            <a id="validarBoton" class="nav-link clientCrear" [routerLink]="['/crear/clientes']">{{obtenerValorButton()}}</a>
           </li>
 
           <li class="nav-item dropdown rounded" routerLinkActive="active">

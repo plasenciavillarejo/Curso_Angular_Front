@@ -3,12 +3,13 @@ import { Cliente } from './cliente';
 import { ClienteService } from './cliente.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
+import { ComponentesService } from '../componentes/componentes.service';
 
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html'
 })
-export class FormComponent implements OnInit{
+export class FormComponent implements OnInit {
 
   public titulo:string = 'Crear Clieten Aplicación Angular';
   public cliente:Cliente = new Cliente();
@@ -53,6 +54,7 @@ export class FormComponent implements OnInit{
         Swal.fire('ClienteActualizado', `Cliente ${cliente.nombre} ha sido actualizado correctamente`, 'success');
     })
   }
+
 
 
 }
