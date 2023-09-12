@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
 /* En está parte debemos de incluir todos los componentes que vayamos creando para poder hacerla visible en nuestra página principal de otra forma nunca se podrán visualizar */
@@ -22,6 +24,8 @@ import { HttpClientModule } from '@angular/common/http';
 
 // Agregamos modulo para los formularios
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DetalleComponent } from './clientes/detalle/detalle.component';
 
 
 
@@ -56,6 +60,7 @@ const routes: Routes = [
     ClientesComponent,
     FormComponent,
     PaginadorComponent,
+    DetalleComponent
   ],
   imports: [
     // Dispone de las directivos *ng:if, *ng:for, etc....
@@ -65,7 +70,12 @@ const routes: Routes = [
     // Agregamos el modulo para los formulario para trabajar con ellos
     FormsModule,
     // Debemos registrar el import de RouterModule pasandole las constantes
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    BrowserAnimationsModule,
+    // Se importa librerías necesarias para trabajar con el datapicker de angular material
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   /* Se registra clase de Servicio con lógica de negocio dentro 'providers', en las versiones actualizadas ya no hace falta registrarlo.
     Versiones antiguar: providers: [ClienteService]

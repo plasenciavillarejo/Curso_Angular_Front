@@ -11,6 +11,7 @@ export class PaginadorComponent implements OnInit, OnChanges {
   paginas: number[];
 
   // Variables límites de páginas a mostrar
+  MAX_PAGINAS:number=6
   desde: number;
   hasta: number;
 
@@ -18,27 +19,23 @@ export class PaginadorComponent implements OnInit, OnChanges {
  
   
   ngOnInit(): void {
-
+    // Inicialmente calculamos el primer rango para la primera página posteriormente se encarga de calcularlo ngOnChanges
+    this.intPaginator();
   }
 
-  // Se implementa el OnChanges para se actualice el rango de las páginas. 
-  /*
+  /* Se implementa el OnChanges para se actualice el rango de las páginas. 
+    SimpleChanges -> No permite obtener los cambios dentro objeto paginador que nos inyecta el componente padre
+  */
   ngOnChanges(changes: SimpleChanges): void {
-   // Calculamos el límite de páginas a mostrar
-   this.desde = Math.min(Math.max(1, this.paginador.number - 4),this.paginador.totalPages - 5);
-   this.hasta = Math.max(Math.min(this.paginador.totalPages,this.paginador.number + 4),6);
-   if(this.paginador.totalPages>5) {
-     this.paginas = new Array(this.hasta - this.desde + 1).fill(0).map((valor, indice) => indice + this.desde);
-   }else {
-     this.paginas = new Array(this.paginador.totalPages).fill(0).map((valor, indice) => indice +1);
-     console.log('Total de paginas', this.paginas);
+   let paginadorActulizado = changes['paginador'];
+  // Si contiene un estado anterior, que haya cambiado inicialmente, entonces llamamos al intPaginador();
+   if(paginadorActulizado.previousValue) {
+    this.paginador();
    }
   }
-  */
-  
 
-  MAX_PAGINAS:number=6
-  ngOnChanges(changes: SimpleChanges): void {
+
+  private intPaginator():void {
     if (this.paginador.totalPages > this.MAX_PAGINAS) {
       this.desde = Math.min( Math.max(0,this.paginador.number-(Math.trunc(this.MAX_PAGINAS/2))),this.paginador.totalPages-this.MAX_PAGINAS);
       this.hasta = Math.max( Math.min(this.paginador.number+(Math.trunc((this.MAX_PAGINAS+1)/2)),(this.paginador.totalPages)),this.MAX_PAGINAS);
@@ -47,8 +44,5 @@ export class PaginadorComponent implements OnInit, OnChanges {
       this.paginas = new Array(this.paginador.totalPages).fill(0).map((valor, indice) => indice + 1);
     }
   }
-
-
-
 }
 

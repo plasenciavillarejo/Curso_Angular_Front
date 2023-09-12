@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Cliente } from './cliente';
 import { ClienteService } from './cliente.service';
 import Swal from 'sweetalert2';
@@ -6,6 +6,7 @@ import * as $ from 'jquery';
 import { ComponentesService } from '../componentes/componentes.service';
 import { ActivatedRoute } from '@angular/router';
 import { pipe, tap } from 'rxjs';
+import { ModalService } from './detalle/modal.service';
 
 @Component({
   selector: 'app-clientes',
@@ -18,12 +19,18 @@ export class ClientesComponent implements OnInit {
   // Varible para el paginador
   paginador: any;
   
+  clienteSeleccionado: Cliente;
   
-  
+  @ViewChild('modalImg') modalImg: ElementRef;
+  urlImagenEndPoint:string = this.clienteService.urlverImagenEndPoint;
+  urlImagenEstatica:string = this.clienteService.urlProductoSinImagen;
+
+
   // Cuando se realiza inyección de dependencias se debe pasar mediante el constructor para poder utilizarlo dentro de el componente
   constructor(private clienteService: ClienteService,
     private componenteServicio: ComponentesService,
-    private activatedRoute: ActivatedRoute){
+    private activatedRoute: ActivatedRoute,
+    private modalService: ModalService){
 
   }
 
@@ -67,6 +74,18 @@ export class ClientesComponent implements OnInit {
           });
       });
         
+
+    // Nos subcribimos el emiter para saber cuanado se inserta / borra / actualiza una imágen en el listado.
+    this.modalService.notificarUpload.subscribe(clienteActualizado => {
+      // recorremos cada cliente y preguntamos si el cliente.id actualizado es el mismo cliente.id que ya existe, si es igual actualizamos el cliente
+      this.clientes = this.clientes.map(clienteOriginal =>{
+        if(clienteActualizado.id == clienteOriginal.id) {
+          clienteOriginal.foto = clienteActualizado.foto;
+        }
+        return clienteOriginal;
+      }) 
+    })
+
         
     $(document).on('click', '#botonJqueryPrueba', function() {
       Swal.fire('Boton Pulsado mediante función Jquery', 'Congratulation!! Integracíon perfecta con Angular', 'success');
@@ -80,7 +99,6 @@ export class ClientesComponent implements OnInit {
       }
     });
     */
-
 
   }
 
@@ -113,9 +131,15 @@ public delete(cliente: Cliente):void {
   })
 }
 
-onEditClick(): void {
-  this.componenteServicio.setButtonText('Editar Cliente');
-}
+  onEditClick(): void {
+    this.componenteServicio.setButtonText('Editar Cliente');
+  }
+
+  abrirModal(cliente:Cliente) {
+    this.clienteSeleccionado = cliente;
+    this.modalService.abrirModal();
+  }
+
 
 
 }

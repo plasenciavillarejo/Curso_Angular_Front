@@ -7,5 +7,6 @@ export class Cliente {
     email!: string;
     precio!: number;
     puerto!: number;
+    foto! : string;
 
 }

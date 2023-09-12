@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CLIENTES } from './clientes.json';
+//import { CLIENTES } from './clientes.json';
 import { Cliente } from './cliente';
 import { Observable, catchError, of, pipe, throwError, map} from 'rxjs';
 import Swal from 'sweetalert2';
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 
 
 // Importamos la clase HttpClient para poder conectar con el BE
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 
 /* Representa la lógica de negocio para recoger los datos de el BE y tratalos en la parte FRONT.
   En versiones actualizadas la inyección de los servicios dentro de app.module.ts ya no hace falta ya que se hace automatico mediante 
@@ -23,12 +23,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 export class ClienteService {
 
   // Nota: el puerto es dinámico por lo que cada vez que levante el BE contiene un puerto diferente
-  private urlEndPoint: string = "http://localhost:57139/listar";
-  private urlCrearEndPoint: string = "http://localhost:57139/crear";
-  private urlBuscarIdProductoEndPoint: string = "http://localhost:57139/ver";
-  private urlActualizarProductoEndPoint: string = "http://localhost:57139/editar";
-  private urlBorrarProductoEndPoint: string = "http://localhost:57139/eliminar";
-  private urlListadoPaginadoEndPoint: string = "http://localhost:57139/listar/page/";
+  private urlEndPoint: string = "http://localhost:62815/listar";
+  private urlCrearEndPoint: string = "http://localhost:62815/crear";
+  private urlBuscarIdProductoEndPoint: string = "http://localhost:62815/ver";
+  private urlActualizarProductoEndPoint: string = "http://localhost:62815/editar";
+  private urlBorrarProductoEndPoint: string = "http://localhost:62815/eliminar";
+  private urlListadoPaginadoEndPoint: string = "http://localhost:62815/listar/page/";
+  private urlSubirImagenEndPoint: string = "http://localhost:62815/upload";
+  
+  urlverImagenEndPoint: string = "http://localhost:62815/verImagen/";
+  urlProductoSinImagen: string = "http://localhost:62815/images/user.svg";
 
   // Cabeceras http
   private httpHeaders = new HttpHeaders({
@@ -117,6 +121,35 @@ export class ClienteService {
     });
   }
 
+
+  // Método para subir imágen
+  subirFoto(archivo:File,id): Observable<HttpEvent<{}>> {
+    // Tenemos que utilizar la clase nativa FormData de javascritp que ya viene integrada
+    let formData = new FormData();
+    formData.append("file", archivo);
+    formData.append("id",id);
+
+    const req = new HttpRequest('POST',`${this.urlSubirImagenEndPoint}`,formData, {
+      reportProgress: true
+    });
+
+    return this.http.request(req);
+    /*
+.pipe(
+      map((response: any) => 
+        response.cliente as Cliente
+      ),
+      catchError (errorCapturadoDesdeBE => {
+        this.router.navigate(['/clientes']);
+        console.log(errorCapturadoDesdeBE.error.errors)
+          Swal.fire('Error subir la imágen', errorCapturadoDesdeBE.error.mensaje, 'error' );
+          return throwError(() => errorCapturadoDesdeBE);
+        })
+    );
+  }
+
+    */
+  }
 
 }
 

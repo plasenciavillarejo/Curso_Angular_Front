@@ -1,0 +1,45 @@
+<!-- *ngIf="modalService.modal" -> Con eso podemos cerrar el modal una vez que se ha abierto -->
+<div *ngIf="modalService.modal" class="abrir-modal animacion fadeIn">
+    <div class="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display:block;">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">{{titulo}}</h5>
+            <button type="button" (click)="cerrarModal()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container d-flex justify-content-center">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <ul class="list-group text-dark" *ngIf="cliente">
+                                <li class="list-group-item active">{{cliente.nombre}}</li>
+                                <li class="list-group-item">{{cliente.precio}}</li>
+                                <li class="list-group-item">{{cliente.precio}}</li>
+                                <li class="list-group-item">{{cliente.createAt}}</li>
+                            </ul>
+                            <div class="input-group mt-4">
+                                <input #fileInput id="inputGroupFile04" (change)="seleccionarFoto($event)" type="file" class="form-control"  aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                                <button (click)="subirFoto()" [disabled]="!imagenSeleccionada" class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04">Upload</button>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div  class="progress mt-3 col-sm-12 col-md-12" role="progressbar" aria-label="Example with label" attr.aria-valuenow="{{progreso}}" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar" [ngStyle]="{width:progreso + '%'}">{{progreso}}%</div>
+                            </div>
+            
+                            <div class="col-sm mt-3">
+                                <label class="mx-2 fw-bolder">Imágen asignada actualmente: </label>
+                                <img class="img-thumbnail rounded" *ngIf="cliente?.foto" [src]="urlImagenEndPoint + cliente.foto" alt="No se puede visualizar la imágen">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button (click)="cerrarModal()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button (click)="cerrarModal()" type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>

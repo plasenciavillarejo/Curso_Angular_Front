@@ -14,6 +14,7 @@
       <table class="table table-bordered table-striped" *ngIf="clientes?.length>0">
         <thead>
             <tr>
+                <th>Imágen</th>
                 <th>id</th>
                 <th>nombre</th>
                 <th>apellido</th>
@@ -26,18 +27,24 @@
         </thead>
         <tbody>
             <tr *ngFor="let cliente of clientes">
-                <td>{{cliente.id}}</td>
-                <td>{{cliente.nombre}}</td>
-                <td>{{cliente.apellido}}</td>
-                <td>{{cliente.precio}}</td>
-                <td>{{cliente.puerto}}</td>
-                <td>{{cliente.createAt}}</td>
-                <td>
-                  <button (click)="onEditClick()" id="botonEditar" type="button" class="btn btn-primary" name="editar" [routerLink]="['/crear/clientes/',cliente.id]">Editar Producto</button>
-                </td>
-                <td>
-                  <button type="button" class="btn btn-primary" name="eliminar" (click)="delete(cliente)"> Eliminar Producto</button>
-                </td>
+              <td class="d-flex justify-content-center" >
+                  <img class="img-thumbnail rounded-pill" style="width: 87px;" *ngIf="cliente?.foto" [src]="urlImagenEndPoint + cliente.foto" alt="No se puede visualizar la imágen">
+                  <img class="img-thumbnail rounded-pill" style="width: 87px;" *ngIf="!cliente?.foto" [src]="urlImagenEstatica" alt="Sin foto actualmente">
+              </td>
+              <td>{{cliente.id}} 
+                 <button id="botonUpload" type="button" class="btn btn-primary" name="upload" (click)="abrirModal(cliente)">Subir imágen</button>
+              </td>
+              <td>{{cliente.nombre}}</td>
+              <td>{{cliente.apellido}}</td>
+              <td>{{cliente.precio}}</td>
+              <td>{{cliente.puerto}}</td>
+              <td>{{cliente.createAt}}</td>
+              <td>
+                <button (click)="onEditClick()" id="botonEditar" type="button" class="btn btn-primary" name="editar" [routerLink]="['/crear/clientes/',cliente.id]">Editar Producto</button>
+              </td>
+              <td>
+                <button type="button" class="btn btn-primary" name="eliminar" (click)="delete(cliente)"> Eliminar Producto</button>
+              </td>
             </tr>
         </tbody>
       </table>
@@ -55,3 +62,6 @@
     </div>
   </div>
   
+
+<!-- Vista detalle.component.html -->
+<detalle-cliente *ngIf="clienteSeleccionado" [cliente]="clienteSeleccionado" ></detalle-cliente>
