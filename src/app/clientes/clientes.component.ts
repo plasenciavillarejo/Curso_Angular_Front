@@ -52,7 +52,7 @@ export class ClientesComponent implements OnInit {
     /* 1.- Lista Completa
     this.clienteService.getClientes().subscribe(
       clientesRecibidosBE => this.clientes = clientesRecibidosBE
-    );
+       );
     */
     
     /* 1.- Lista Paginada - Debemos agregar el page desde el app.module.ts -> :page
