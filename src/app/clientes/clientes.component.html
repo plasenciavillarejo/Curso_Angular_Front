@@ -21,6 +21,7 @@
                 <th>Precio</th>
                 <th>Puerto</th>
                 <th>fecha</th>
+                <th>Region</th>
                 <th>Editar un Producto</th>
                 <th>Eliminar un Producto</th>
             </tr>
@@ -39,6 +40,7 @@
               <td>{{cliente.precio}}</td>
               <td>{{cliente.puerto}}</td>
               <td>{{cliente.createAt}}</td>
+              <td>{{cliente.region.nombre}}</td>
               <td>
                 <button (click)="onEditClick()" id="botonEditar" type="button" class="btn btn-primary" name="editar" [routerLink]="['/crear/clientes/',cliente.id]">Editar Producto</button>
               </td>

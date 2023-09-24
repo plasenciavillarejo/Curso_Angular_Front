@@ -1,3 +1,5 @@
+import { Region } from "./region";
+
 // Esto es una clase que representa a la entidad que existe en el BE
 export class Cliente {
     id!: number; // Declaración (id!) con indicación de inicialización posterior
@@ -8,5 +10,5 @@ export class Cliente {
     precio!: number;
     puerto!: number;
     foto! : string;
-
+    region!: Region;
 }

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 
 // Importamos la clase HttpClient para poder conectar con el BE
 import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { Region } from './region';
 
 /* Representa la lógica de negocio para recoger los datos de el BE y tratalos en la parte FRONT.
   En versiones actualizadas la inyección de los servicios dentro de app.module.ts ya no hace falta ya que se hace automatico mediante 
@@ -23,16 +24,18 @@ import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common
 export class ClienteService {
 
   // Nota: el puerto es dinámico por lo que cada vez que levante el BE contiene un puerto diferente
-  private urlEndPoint: string = "http://localhost:62815/listar";
-  private urlCrearEndPoint: string = "http://localhost:62815/crear";
-  private urlBuscarIdProductoEndPoint: string = "http://localhost:62815/ver";
-  private urlActualizarProductoEndPoint: string = "http://localhost:62815/editar";
-  private urlBorrarProductoEndPoint: string = "http://localhost:62815/eliminar";
-  private urlListadoPaginadoEndPoint: string = "http://localhost:62815/listar/page/";
-  private urlSubirImagenEndPoint: string = "http://localhost:62815/upload";
+  private urlEndPoint: string = "http://localhost:64010/listar";
+  private urlCrearEndPoint: string = "http://localhost:64010/crear";
+  private urlBuscarIdProductoEndPoint: string = "http://localhost:64010/ver";
+  private urlActualizarProductoEndPoint: string = "http://localhost:64010/editar";
+  private urlBorrarProductoEndPoint: string = "http://localhost:64010/eliminar";
+  private urlListadoPaginadoEndPoint: string = "http://localhost:64010/listar/page/";
+  private urlSubirImagenEndPoint: string = "http://localhost:64010/upload";
+
+  private urlListadoRegiones: string = "http://localhost:64010/listar/regiones";
   
-  urlverImagenEndPoint: string = "http://localhost:62815/verImagen/";
-  urlProductoSinImagen: string = "http://localhost:62815/images/user.svg";
+  urlverImagenEndPoint: string = "http://localhost:64010/verImagen/";
+  urlProductoSinImagen: string = "http://localhost:64010/images/user.svg";
 
   // Cabeceras http
   private httpHeaders = new HttpHeaders({
@@ -52,6 +55,10 @@ export class ClienteService {
     
     // Retornamos la petición hacia nuetra BE envuelto en un Observable
     return this.http.get<Cliente[]>(this.urlEndPoint);
+  }
+
+  getRegiones():Observable<Region[]> {
+    return this.http.get<Region[]>(this.urlListadoRegiones);
   }
 
   /* Lista Paginada 

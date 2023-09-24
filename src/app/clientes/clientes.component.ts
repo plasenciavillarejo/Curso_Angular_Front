@@ -7,6 +7,7 @@ import { ComponentesService } from '../componentes/componentes.service';
 import { ActivatedRoute } from '@angular/router';
 import { pipe, tap } from 'rxjs';
 import { ModalService } from './detalle/modal.service';
+import { Region } from './region';
 
 @Component({
   selector: 'app-clientes',
@@ -20,7 +21,9 @@ export class ClientesComponent implements OnInit {
   paginador: any;
   
   clienteSeleccionado: Cliente;
-  
+
+  public regiones: Region[];
+
   @ViewChild('modalImg') modalImg: ElementRef;
   urlImagenEndPoint:string = this.clienteService.urlverImagenEndPoint;
   urlImagenEstatica:string = this.clienteService.urlProductoSinImagen;
@@ -99,7 +102,6 @@ export class ClientesComponent implements OnInit {
       }
     });
     */
-
   }
 
 

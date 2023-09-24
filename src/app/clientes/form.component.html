@@ -36,17 +36,31 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label for="createAt" class="col-form-label col-sm-2">Fecha</label>
-                <div class="col-sm-6 mb-4">
-                    <!-- <input type="date" class="form-control" [(ngModel)]="cliente.createAt" name="createAt"> -->
-                    <input style="display: inline;" matInput [matDatepicker]="picker" class="form-control" [(ngModel)]="cliente.createAt" name="createAt" >
+            <div class="form-group row">                
+                <div class="row">
+                    <label for="createAt" class="col-form-label col-sm-2">Fecha</label>
+                    <div class="col mb-4">
+                        <!-- <input type="date" class="form-control" [(ngModel)]="cliente.createAt" name="createAt"> -->
+                        <input style="display: inline;" matInput [matDatepicker]="picker" class="form-control" [(ngModel)]="cliente.createAt" name="createAt" >
+                    </div>
+                    <div class="col">
                         <mat-hint>MM/DD/YYYY</mat-hint>
                         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
+                    </div>
                 </div>
             </div>
 
+
+            <div class="form-group row">
+                <label for="region" class="col-form-label col-sm-2">Región</label>
+                <div class="col-sm-6 mb-4">
+                    <select [compareWith]="compararRegion" class="form-select" [(ngModel)]="cliente.region" name="region" >
+                        <option  [ngValue]="undefined">-- Selecciona la region --</option>
+                        <option *ngFor="let region of regiones" [ngValue]="region">{{region.nombre}}</option>
+                    </select>
+                </div>
+            </div>
 
             <!-- Utilizamos una plantilla de angular para reutilizar el boton que ya existe y solo cambiar la lógica de negocio internamente -->
             <!-- ########################################################################################################################### -->
