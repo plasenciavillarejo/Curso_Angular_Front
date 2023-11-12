@@ -26,6 +26,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DetalleComponent } from './clientes/detalle/detalle.component';
+import { LoginComponent } from './usuarios/login.component';
 
 
 
@@ -47,7 +48,8 @@ const routes: Routes = [
   {path: 'clientes', component: ClientesComponent},
   {path: 'clientes/page/:page', component: ClientesComponent},
   {path: 'crear/clientes', component: FormComponent},
-  {path: 'crear/clientes/:id', component: FormComponent}
+  {path: 'crear/clientes/:id', component: FormComponent},
+  {path: 'login', component: LoginComponent}
 ];
 
 @NgModule({
@@ -60,7 +62,8 @@ const routes: Routes = [
     ClientesComponent,
     FormComponent,
     PaginadorComponent,
-    DetalleComponent
+    DetalleComponent,
+    LoginComponent
   ],
   imports: [
     // Dispone de las directivos *ng:if, *ng:for, etc....

@@ -18,11 +18,11 @@ export class HeaderComponent implements OnInit {
     }
 
     obtenerValorButton():string {
-        return this.componenteService.getButtonText();
+         return this.componenteService.getButtonText();
     }
 
     ngOnInit(): void {
-        
+        this.componenteService.setButtonText(this.componenteService.tituloBoton);
     }
 
 }
