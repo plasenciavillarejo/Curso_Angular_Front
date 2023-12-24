@@ -22,8 +22,8 @@
                 <th>Puerto</th>
                 <th>fecha</th>
                 <th>Region</th>
-                <th>Editar un Producto</th>
-                <th>Eliminar un Producto</th>
+                <th *ngIf="authService.verificarRol('ROLE_ADMIN')">Editar un Producto</th>
+                <th *ngIf="authService.verificarRol('ROLE_ADMIN')">Eliminar un Producto</th>
             </tr>
         </thead>
         <tbody>
@@ -32,7 +32,7 @@
                   <img class="img-thumbnail rounded-pill" style="width: 87px;" *ngIf="cliente?.foto" [src]="urlImagenEndPoint + cliente.foto" alt="No se puede visualizar la imágen">
                   <img class="img-thumbnail rounded-pill" style="width: 87px;" *ngIf="!cliente?.foto" [src]="urlImagenEstatica" alt="Sin foto actualmente">
               </td>
-              <td>{{cliente.id}} 
+              <td *ngIf="authService.verificarRol('ROLE_ADMIN')">{{cliente.id}} 
                  <button id="botonUpload" type="button" class="btn btn-primary" name="upload" (click)="abrirModal(cliente)">Subir imágen</button>
               </td>
               <td>{{cliente.nombre}}</td>
@@ -41,10 +41,10 @@
               <td>{{cliente.puerto}}</td>
               <td>{{cliente.createAt}}</td>
               <td>{{cliente.region.nombre}}</td>
-              <td>
+              <td *ngIf="authService.verificarRol('ROLE_ADMIN')">
                 <button (click)="onEditClick()" id="botonEditar" type="button" class="btn btn-primary" name="editar" [routerLink]="['/crear/clientes/',cliente.id]">Editar Producto</button>
               </td>
-              <td>
+              <td *ngIf="authService.verificarRol('ROLE_ADMIN')">
                 <button type="button" class="btn btn-primary" name="eliminar" (click)="delete(cliente)"> Eliminar Producto</button>
               </td>
             </tr>

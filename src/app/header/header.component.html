@@ -22,7 +22,7 @@
           <!--                        PLASENCIA                                  -->
           <!-- ################################################################# -->
 
-          <li class="nav-item rounded" routerLinkActive="active">
+          <li *ngIf="authService.verificarRol('ROLE_ADMIN')" class="nav-item rounded" routerLinkActive="active">
             <a id="validarBoton" class="nav-link clientCrear" [routerLink]="['/crear/clientes']">{{obtenerValorButton()}}</a>
           </li>
         </ul>

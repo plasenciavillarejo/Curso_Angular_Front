@@ -138,6 +138,16 @@ export class AuthService {
     this._usuario = null;
     sessionStorage.clear();
   }
-
+  /**
+   * Se verificar los roles del usuario
+   * @param role devuelve los roles que contiene el usuario
+   */
+  verificarRol(role: string): boolean {
+    // En javaScript existe el includes que valida si dentro de un array existe o no ese objeto que se le está pasando por parémetro
+    if(this.usuario.roles.includes(role)){
+      return true;
+    }
+    return false;
+  }
 
 }
