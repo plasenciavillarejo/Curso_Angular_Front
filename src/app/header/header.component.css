@@ -1,3 +1,7 @@
 .active {
     background-color: #b1d6de;
 }
+
+.dropdown-menu[data-bs-popper] {
+    left: -88px;
+  }

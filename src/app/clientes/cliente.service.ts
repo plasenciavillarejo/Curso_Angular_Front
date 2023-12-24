@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 // Importamos la clase HttpClient para poder conectar con el BE
 import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Region } from './region';
+import { AuthService } from '../usuarios/auth.service';
 
 /* Representa la lógica de negocio para recoger los datos de el BE y tratalos en la parte FRONT.
   En versiones actualizadas la inyección de los servicios dentro de app.module.ts ya no hace falta ya que se hace automatico mediante 
@@ -55,8 +56,21 @@ export class ClienteService {
     'Content-type': 'application/json'
   })
 
+  /**
+   * Método encargado de obtener la cabecera para enviarla en cada petición
+   */
+  private agregarCabeceraSeguridad() {
+    // Obtenemos el token
+    let token = this.authService.token;
+    if(token != null) {
+      return this.httpHeaders.append('Authorization', 'Bearer ' + token);
+    }
+    return this.httpHeaders;
+  }
+
   constructor(private http: HttpClient,
-    private router: Router) { }
+    private router: Router,
+    private authService: AuthService) { }
 
   /* Obtenemos los clientes completa recibido de el BE. Ahora mismo es un método sincrono, lo mejor sería hacerlo Asincrono utilizando los Observables de RxJs.
     Síncrono: Cliente[] {
@@ -67,10 +81,17 @@ export class ClienteService {
   private isNoAutorizado(error): boolean {
     // 401 - No autorizado 
     // 403 - Recurso prohibido (No tiene permisos para visualizarlo)
-    if (error.status == 401 || error.status == 403) {
+    if (error.status == 401) {
       this.router.navigate(['/login']);
       return true;
     }
+    // Cuando no tenga el rol adecuado para visualizar el registro lo redirigimos a la pantalla inicial y damos un mensaje personalizado
+    if (error.status == 403) {
+      Swal.fire('Acceso denegado', 'No contiene permisos para poder visualizar este recurso', 'warning');
+      this.router.navigate(['/clientes']);
+      return true;
+    }
+
     return false;
   }
 
@@ -80,7 +101,7 @@ export class ClienteService {
     //return of(CLIENTES);
 
     // Retornamos la petición hacia nuetra BE envuelto en un Observable
-    return this.http.get<Cliente[]>(this.urlEndPoint).pipe(
+    return this.http.get<Cliente[]>(this.urlEndPoint, {headers: this.agregarCabeceraSeguridad()}).pipe(
       catchError(e => {
         this.isNoAutorizado(e);
         return throwError(() => e);
@@ -89,7 +110,7 @@ export class ClienteService {
   }
 
   getRegiones(): Observable<Region[]> {
-    return this.http.get<Region[]>(this.urlListadoRegiones).pipe(
+    return this.http.get<Region[]>(this.urlListadoRegiones, {headers: this.agregarCabeceraSeguridad()}).pipe(
       catchError(e => {
         this.isNoAutorizado(e);
         return throwError(() => e);
@@ -110,9 +131,10 @@ export class ClienteService {
     );
   }
   createClient(cliente: Cliente): Observable<Cliente> {
-    return this.http.post<Cliente>(this.urlCrearEndPoint, cliente, {
-      headers: this.httpHeaders
+    return this.http.post(this.urlCrearEndPoint, cliente, {
+      headers: this.agregarCabeceraSeguridad()
     }).pipe(
+      map((response: any) => response.cliente as Cliente),
       catchError(errorCapturadoDesdeBE => {
         this.router.navigate(['/crear/clientes']);
         // Se pasa el errors[0] ya que desde el BE se está pasando un map y el error se encuentra en la posición 0 de el array.
@@ -134,7 +156,7 @@ export class ClienteService {
   // Busca el producto por su id
   // Para capturar el error se utiliza pipe
   getCliente(id: number): Observable<Cliente> {
-    return this.http.get<Cliente>(`${this.urlBuscarIdProductoEndPoint}/${id}`).pipe(
+    return this.http.get<Cliente>(`${this.urlBuscarIdProductoEndPoint}/${id}`, {headers: this.agregarCabeceraSeguridad()}).pipe(
       // Obtiene el error que se recibe por argumento a traves de la repuesta de estado de el BE
       catchError(errorCapturadoDesdeBE => {
 
@@ -153,7 +175,7 @@ export class ClienteService {
   // Actualiza el Producto
   actualizarProducto(cliente: Cliente): Observable<Cliente> {
     return this.http.put<Cliente>(`${this.urlActualizarProductoEndPoint}/${cliente.id}`, cliente, {
-      headers: this.httpHeaders
+      headers: this.agregarCabeceraSeguridad()
     }).pipe(
       catchError(errorCapturadoDesdeBE => {
         
@@ -174,7 +196,7 @@ export class ClienteService {
   // Borrar un producto
   borrarProducto(id: number): Observable<Cliente> {
     return this.http.delete<Cliente>(`${this.urlBorrarProductoEndPoint}/${id}`, {
-      headers: this.httpHeaders
+      headers: this.agregarCabeceraSeguridad()
     }).pipe(
       catchError(errorCapturadoDesdeBE => {
         if (this.isNoAutorizado(errorCapturadoDesdeBE)) {
@@ -199,8 +221,17 @@ export class ClienteService {
     formData.append("file", archivo);
     formData.append("id", id);
 
+    // Enviamos la cabecera de segurida
+    let httpHeaders = new HttpHeaders();
+    let token = this.authService.token;
+    if(token != null) {
+      // Como httpHeaders devuelve una nueva instancia, este como es inmutable, debemos de asignale la instancia
+      httpHeaders = httpHeaders.append('Authorization', 'Bearer ' + token);
+    }
+
     const req = new HttpRequest('POST', `${this.urlSubirImagenEndPoint}`, formData, {
-      reportProgress: true
+      reportProgress: true,
+      headers: httpHeaders
     });
 
     return this.http.request(req).pipe(
