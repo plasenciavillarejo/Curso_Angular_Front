@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 //import { CLIENTES } from './clientes.json';
 import { Cliente } from './cliente';
 import { Observable, catchError, of, pipe, throwError, map } from 'rxjs';
-import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-
+import Swal from 'sweetalert2';
 
 // Importamos la clase HttpClient para poder conectar con el BE
 import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
@@ -77,30 +76,6 @@ export class ClienteService {
     Asíncrono: Observable<Cliente[]>
   */
 
-  // Método encargado de validar si está o no logueado/autorizado
-  private isNoAutorizado(error): boolean {
-    // 401 - No autorizado 
-    // 403 - Recurso prohibido (No tiene permisos para visualizarlo)
-    if (error.status == 401) {
-      
-      // Si el token Expira debemos de enviarlo a la página principal, para ello preguntamos si está o no autenticado
-      if(this.authService.isAuthenticated()) {
-        this.authService.logout();
-      }
-      this.router.navigate(['/login']);
-      return true;
-    }
-    // Cuando no tenga el rol adecuado para visualizar el registro lo redirigimos a la pantalla inicial y damos un mensaje personalizado
-    if (error.status == 403) {
-      Swal.fire('Acceso denegado', 'No contiene permisos para poder visualizar este recurso', 'warning');
-      this.router.navigate(['/clientes']);
-      return true;
-    }
-
-    return false;
-  }
-
-
   getClientes(): Observable<Cliente[]> {
     // Convertimos nuestro listado clientes en un Observable
     //return of(CLIENTES);
@@ -108,19 +83,13 @@ export class ClienteService {
     // Retornamos la petición hacia nuetra BE envuelto en un Observable
     return this.http.get<Cliente[]>(this.urlEndPoint).pipe(
       catchError(e => {
-        this.isNoAutorizado(e);
         return throwError(() => e);
       })
     );
   }
 
   getRegiones(): Observable<Region[]> {
-    return this.http.get<Region[]>(this.urlListadoRegiones).pipe(
-      catchError(e => {
-        this.isNoAutorizado(e);
-        return throwError(() => e);
-      })
-    );
+    return this.http.get<Region[]>(this.urlListadoRegiones);
   }
 
   /* Lista Paginada 
@@ -141,14 +110,9 @@ export class ClienteService {
       catchError(errorCapturadoDesdeBE => {
         this.router.navigate(['/crear/clientes']);
         // Se pasa el errors[0] ya que desde el BE se está pasando un map y el error se encuentra en la posición 0 de el array.
-        if (this.isNoAutorizado(errorCapturadoDesdeBE)) {
-          return throwError(() => errorCapturadoDesdeBE);
-        }
-
         if (errorCapturadoDesdeBE.status == 400) {
           return throwError(() => errorCapturadoDesdeBE);
         }
-
         console.log(errorCapturadoDesdeBE.error.errors[0])
         Swal.fire('Error al crear', errorCapturadoDesdeBE.error.errors[0], 'error');
         return throwError(() => errorCapturadoDesdeBE);
@@ -163,8 +127,9 @@ export class ClienteService {
       // Obtiene el error que se recibe por argumento a traves de la repuesta de estado de el BE
       catchError(errorCapturadoDesdeBE => {
 
-        if (this.isNoAutorizado(errorCapturadoDesdeBE)) {
-          return throwError(() => errorCapturadoDesdeBE);
+        if(errorCapturadoDesdeBE.status != 401 && errorCapturadoDesdeBE.error.errors) {
+          this.router.navigate(['/clientes']);
+          console.error(errorCapturadoDesdeBE.error.errors);
         }
 
         this.router.navigate(['/clientes']);
@@ -179,11 +144,6 @@ export class ClienteService {
   actualizarProducto(cliente: Cliente): Observable<Cliente> {
     return this.http.put<Cliente>(`${this.urlActualizarProductoEndPoint}/${cliente.id}`, cliente).pipe(
       catchError(errorCapturadoDesdeBE => {
-        
-        if (this.isNoAutorizado(errorCapturadoDesdeBE)) {
-          return throwError(() => errorCapturadoDesdeBE);
-        }
-
         this.router.navigate(['/crear/clientes']);
         console.log(errorCapturadoDesdeBE.error.mensaje)
         Swal.fire('Error al editar', errorCapturadoDesdeBE.error.mensaje, 'error');
@@ -198,10 +158,6 @@ export class ClienteService {
   borrarProducto(id: number): Observable<Cliente> {
     return this.http.delete<Cliente>(`${this.urlBorrarProductoEndPoint}/${id}`).pipe(
       catchError(errorCapturadoDesdeBE => {
-        if (this.isNoAutorizado(errorCapturadoDesdeBE)) {
-          return throwError(() => errorCapturadoDesdeBE);
-        }
-
         this.router.navigate(['/crear/clientes']);
         console.log(errorCapturadoDesdeBE.error.mensaje)
         Swal.fire('Error al editar', errorCapturadoDesdeBE.error.mensaje, 'error');
@@ -233,12 +189,7 @@ export class ClienteService {
       headers: httpHeaders
     });
 
-    return this.http.request(req).pipe(
-      catchError (errorCapturadoDesdeBE => {
-        this.isNoAutorizado(errorCapturadoDesdeBE);
-        return throwError(() => errorCapturadoDesdeBE);
-      })
-    );
+    return this.http.request(req);
     /*
 .pipe(
       map((response: any) => 

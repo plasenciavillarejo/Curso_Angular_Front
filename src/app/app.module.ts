@@ -30,6 +30,7 @@ import { LoginComponent } from './usuarios/login.component';
 import { AuthGuard } from './usuarios/guards/auth.guard';
 import { RoleGuard } from './usuarios/guards/role.guard';
 import { TokenInterceptor } from './usuarios/interceptors/token.interceptor';
+import { AuthInterceptor } from './usuarios/interceptors/auth.interceptor';
 
 
 
@@ -92,9 +93,10 @@ const routes: Routes = [
     **Importantes:** 
     Para el caso de HttpInterceptors debemos de agregar el objeto para poder inteceptar todas las peticiones y enviar el token de seguridad
   */
-  providers: [{
-    provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true
-  }], 
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ], 
   bootstrap: [AppComponent] // Component principal que se va a cargar en nuestra aplicación
 })
 export class AppModule { }
