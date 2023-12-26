@@ -15,14 +15,14 @@
         <thead>
             <tr>
                 <th>Imágen</th>
-                <th>id</th>
+                <th *ngIf="authService.verificarRol('ROLE_ADMIN')">id</th>
                 <th>nombre</th>
                 <th>apellido</th>
                 <th>Precio</th>
                 <th>Puerto</th>
                 <th>fecha</th>
                 <th>Region</th>
-                <th *ngIf="authService.verificarRol('ROLE_ADMIN')">Editar un Producto</th>
+                <th>Editar un Producto</th>
                 <th *ngIf="authService.verificarRol('ROLE_ADMIN')">Eliminar un Producto</th>
             </tr>
         </thead>
@@ -41,8 +41,8 @@
               <td>{{cliente.puerto}}</td>
               <td>{{cliente.createAt}}</td>
               <td>{{cliente.region.nombre}}</td>
-              <td *ngIf="authService.verificarRol('ROLE_ADMIN')">
-                <button (click)="onEditClick()" id="botonEditar" type="button" class="btn btn-primary" name="editar" [routerLink]="['/crear/clientes/',cliente.id]">Editar Producto</button>
+              <td >
+                <button (click)="onEditClick()" id="botonEditar" type="button" class="btn btn-primary" name="editar" [routerLink]="['/editar/clientes/',cliente.id]">Editar Producto</button>
               </td>
               <td *ngIf="authService.verificarRol('ROLE_ADMIN')">
                 <button type="button" class="btn btn-primary" name="eliminar" (click)="delete(cliente)"> Eliminar Producto</button>

@@ -58,7 +58,7 @@ export class ClienteService {
 
   /**
    * Método encargado de obtener la cabecera para enviarla en cada petición
-   */
+   
   private agregarCabeceraSeguridad() {
     // Obtenemos el token
     let token = this.authService.token;
@@ -66,7 +66,7 @@ export class ClienteService {
       return this.httpHeaders.append('Authorization', 'Bearer ' + token);
     }
     return this.httpHeaders;
-  }
+  }*/
 
   constructor(private http: HttpClient,
     private router: Router,
@@ -82,6 +82,11 @@ export class ClienteService {
     // 401 - No autorizado 
     // 403 - Recurso prohibido (No tiene permisos para visualizarlo)
     if (error.status == 401) {
+      
+      // Si el token Expira debemos de enviarlo a la página principal, para ello preguntamos si está o no autenticado
+      if(this.authService.isAuthenticated()) {
+        this.authService.logout();
+      }
       this.router.navigate(['/login']);
       return true;
     }
@@ -101,7 +106,7 @@ export class ClienteService {
     //return of(CLIENTES);
 
     // Retornamos la petición hacia nuetra BE envuelto en un Observable
-    return this.http.get<Cliente[]>(this.urlEndPoint, {headers: this.agregarCabeceraSeguridad()}).pipe(
+    return this.http.get<Cliente[]>(this.urlEndPoint).pipe(
       catchError(e => {
         this.isNoAutorizado(e);
         return throwError(() => e);
@@ -110,7 +115,7 @@ export class ClienteService {
   }
 
   getRegiones(): Observable<Region[]> {
-    return this.http.get<Region[]>(this.urlListadoRegiones, {headers: this.agregarCabeceraSeguridad()}).pipe(
+    return this.http.get<Region[]>(this.urlListadoRegiones).pipe(
       catchError(e => {
         this.isNoAutorizado(e);
         return throwError(() => e);
@@ -131,9 +136,7 @@ export class ClienteService {
     );
   }
   createClient(cliente: Cliente): Observable<Cliente> {
-    return this.http.post(this.urlCrearEndPoint, cliente, {
-      headers: this.agregarCabeceraSeguridad()
-    }).pipe(
+    return this.http.post(this.urlCrearEndPoint, cliente).pipe(
       map((response: any) => response.cliente as Cliente),
       catchError(errorCapturadoDesdeBE => {
         this.router.navigate(['/crear/clientes']);
@@ -156,7 +159,7 @@ export class ClienteService {
   // Busca el producto por su id
   // Para capturar el error se utiliza pipe
   getCliente(id: number): Observable<Cliente> {
-    return this.http.get<Cliente>(`${this.urlBuscarIdProductoEndPoint}/${id}`, {headers: this.agregarCabeceraSeguridad()}).pipe(
+    return this.http.get<Cliente>(`${this.urlBuscarIdProductoEndPoint}/${id}`).pipe(
       // Obtiene el error que se recibe por argumento a traves de la repuesta de estado de el BE
       catchError(errorCapturadoDesdeBE => {
 
@@ -174,9 +177,7 @@ export class ClienteService {
 
   // Actualiza el Producto
   actualizarProducto(cliente: Cliente): Observable<Cliente> {
-    return this.http.put<Cliente>(`${this.urlActualizarProductoEndPoint}/${cliente.id}`, cliente, {
-      headers: this.agregarCabeceraSeguridad()
-    }).pipe(
+    return this.http.put<Cliente>(`${this.urlActualizarProductoEndPoint}/${cliente.id}`, cliente).pipe(
       catchError(errorCapturadoDesdeBE => {
         
         if (this.isNoAutorizado(errorCapturadoDesdeBE)) {
@@ -195,9 +196,7 @@ export class ClienteService {
 
   // Borrar un producto
   borrarProducto(id: number): Observable<Cliente> {
-    return this.http.delete<Cliente>(`${this.urlBorrarProductoEndPoint}/${id}`, {
-      headers: this.agregarCabeceraSeguridad()
-    }).pipe(
+    return this.http.delete<Cliente>(`${this.urlBorrarProductoEndPoint}/${id}`).pipe(
       catchError(errorCapturadoDesdeBE => {
         if (this.isNoAutorizado(errorCapturadoDesdeBE)) {
           return throwError(() => errorCapturadoDesdeBE);

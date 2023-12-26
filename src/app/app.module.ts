@@ -20,13 +20,17 @@ import { PaginadorComponent } from './paginador/paginador.component';
 import { RouterModule, Routes } from '@angular/router';
 
 // Agregamos httpClient para poder conectar el front con el be
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 // Agregamos modulo para los formularios
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DetalleComponent } from './clientes/detalle/detalle.component';
 import { LoginComponent } from './usuarios/login.component';
+import { AuthGuard } from './usuarios/guards/auth.guard';
+import { RoleGuard } from './usuarios/guards/role.guard';
+import { TokenInterceptor } from './usuarios/interceptors/token.interceptor';
+
 
 
 
@@ -47,8 +51,9 @@ const routes: Routes = [
   {path: 'directivas', component: DirectivaComponent},
   {path: 'clientes', component: ClientesComponent},
   {path: 'clientes/page/:page', component: ClientesComponent},
-  {path: 'crear/clientes', component: FormComponent},
-  {path: 'crear/clientes/:id', component: FormComponent},
+  // Agregamos nuestro wuard en la que recibe una arrays de wuards, se le incluye la data para indicar los roles que tiene los permios para visualizar dicho registro
+  {path: 'crear/clientes', component: FormComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'ROLE_ADMIN'} },
+  {path: 'editar/clientes/:id', component: FormComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'ROLE_ADMIN'} },
   {path: 'login', component: LoginComponent}
 ];
 
@@ -80,10 +85,16 @@ const routes: Routes = [
     MatDatepickerModule,
     MatNativeDateModule
   ],
-  /* Se registra clase de Servicio con lógica de negocio dentro 'providers', en las versiones actualizadas ya no hace falta registrarlo.
+  /**
+   *  Se registra clase de Servicio con lógica de negocio dentro 'providers', en las versiones actualizadas ya no hace falta registrarlo.
     Versiones antiguar: providers: [ClienteService]
+    
+    **Importantes:** 
+    Para el caso de HttpInterceptors debemos de agregar el objeto para poder inteceptar todas las peticiones y enviar el token de seguridad
   */
-  providers: [], 
+  providers: [{
+    provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true
+  }], 
   bootstrap: [AppComponent] // Component principal que se va a cargar en nuestra aplicación
 })
 export class AppModule { }

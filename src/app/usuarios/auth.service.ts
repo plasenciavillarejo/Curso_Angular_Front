@@ -150,4 +150,21 @@ export class AuthService {
     return false;
   }
 
+  /**
+   * Método encargado de validar la fecha de expiración del token directamente desde el front si necesidad de ir al BE a consultarlo
+   */
+  isTokenExpirado():boolean {
+    let token = this.token;
+    let payload = this.obtenerDatosToken(token);
+
+    // Obtenemos la fecha actual convertida en segundos
+    let now = new Date().getTime() / 1000;
+
+    // Fecha cuando expira el token está dentro de payload.exp
+    if(payload.exp < now)  {
+      return true;
+    }
+    return false;
+  }
+
 }
