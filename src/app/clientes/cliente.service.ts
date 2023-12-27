@@ -46,8 +46,10 @@ export class ClienteService {
   private urlListadoPaginadoEndPoint: string = "http://localhost:8090/api/productos/listar/page/";
   private urlSubirImagenEndPoint: string = "http://localhost:8090/api/productos/upload";
   private urlListadoRegiones: string = "http://localhost:8090/api/productos/listar/regiones";
+ // urlverImagenEndPoint: string = "http://localhost:52423/verImagen/";
+  
   urlverImagenEndPoint: string = "http://localhost:8090/api/productos/verImagen/";
-  urlProductoSinImagen: string = "http://localhost:8090/api/productos/images/user.svg"; 
+  urlProductoSinImagen: string = "http://localhost:8090/images/user.svg"; 
   
 
   // Cabeceras http
