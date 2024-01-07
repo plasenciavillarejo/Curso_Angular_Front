@@ -31,6 +31,7 @@ import { AuthGuard } from './usuarios/guards/auth.guard';
 import { RoleGuard } from './usuarios/guards/role.guard';
 import { TokenInterceptor } from './usuarios/interceptors/token.interceptor';
 import { AuthInterceptor } from './usuarios/interceptors/auth.interceptor';
+import { DetalleFacturaComponent } from './facturas/detalle-factura.component';
 
 
 
@@ -55,7 +56,9 @@ const routes: Routes = [
   // Agregamos nuestro wuard en la que recibe una arrays de wuards, se le incluye la data para indicar los roles que tiene los permios para visualizar dicho registro
   {path: 'crear/clientes', component: FormComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'ROLE_ADMIN'} },
   {path: 'editar/clientes/:id', component: FormComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'ROLE_ADMIN'} },
-  {path: 'login', component: LoginComponent}
+  {path: 'login', component: LoginComponent},
+  {path: 'facturas/:id', component: DetalleFacturaComponent}
+
 ];
 
 @NgModule({
@@ -69,7 +72,9 @@ const routes: Routes = [
     FormComponent,
     PaginadorComponent,
     DetalleComponent,
-    LoginComponent
+    DetalleComponent,
+    LoginComponent,
+    DetalleFacturaComponent
   ],
   imports: [
     // Dispone de las directivos *ng:if, *ng:for, etc....
