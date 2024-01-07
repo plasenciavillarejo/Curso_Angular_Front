@@ -141,9 +141,9 @@ public delete(cliente: Cliente):void {
 
   abrirModal(cliente:Cliente) {
     this.clienteSeleccionado = cliente;
+    this.clienteService.enviarIdClienteSeleccionado(cliente.id);
     this.modalService.abrirModal();
   }
-
 
 
 }

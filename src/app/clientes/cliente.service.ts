@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 //import { CLIENTES } from './clientes.json';
 import { Cliente } from './cliente';
-import { Observable, catchError, of, pipe, throwError, map } from 'rxjs';
+import { Observable, catchError, of, pipe, throwError, map, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Region } from './region';
 import { AuthService } from '../usuarios/auth.service';
+import { Factura } from '../facturas/models/factura';
 
 /* Representa la lógica de negocio para recoger los datos de el BE y tratalos en la parte FRONT.
   En versiones actualizadas la inyección de los servicios dentro de app.module.ts ya no hace falta ya que se hace automatico mediante 
@@ -46,7 +47,7 @@ export class ClienteService {
   private urlListadoPaginadoEndPoint: string = "http://localhost:8090/api/productos/listar/page/";
   private urlSubirImagenEndPoint: string = "http://localhost:8090/api/productos/upload";
   private urlListadoRegiones: string = "http://localhost:8090/api/productos/listar/regiones";
- // urlverImagenEndPoint: string = "http://localhost:52423/verImagen/";
+  private urlObtenerFacturaPorId: string = "http://localhost:8090/api/productos/listar/factura";
   
   urlverImagenEndPoint: string = "http://localhost:8090/api/productos/verImagen/";
   urlProductoSinImagen: string = "http://localhost:8090/images/user.svg"; 
@@ -170,7 +171,6 @@ export class ClienteService {
     );
   }
 
-
   // Método para subir imágen
   subirFoto(archivo: File, id): Observable<HttpEvent<{}>> {
     // Tenemos que utilizar la clase nativa FormData de javascritp que ya viene integrada
@@ -209,14 +209,18 @@ export class ClienteService {
     */
   }
 
+  // BehaviorSubject almacena el valor más reciente y lo proporciona automáticamente a los nuevos suscriptores cuando se registran.
+  private idClienteSeleccionadoSource =  new BehaviorSubject<number>(null);
+  // El observable idClienteSeleccionado$ se utiliza para permitir que los componentes se suscriban y reciban actualizaciones cuando el valor del BehaviorSubject cambia
+  // $ -> indica que la variable es un observable
+  idClienteSeleccionado$ = this.idClienteSeleccionadoSource.asObservable();
+  enviarIdClienteSeleccionado(id: number) {
+    this.idClienteSeleccionadoSource.next(id);
+  }
 
-
-
-
-
-
-
-
+  obtenerFacturasPorId(id: number): Observable<Factura[]> {
+    return this.http.get<Factura[]>(`${this.urlObtenerFacturaPorId}/${id}`);
+  }
 
 
 }

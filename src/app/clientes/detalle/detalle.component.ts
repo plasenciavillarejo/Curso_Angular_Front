@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { HttpEventType } from '@angular/common/http';
 import { ModalService } from './modal.service';
+import { Factura } from 'src/app/facturas/models/factura';
+import { ClientesComponent } from '../clientes.component';
 
 @Component({
   selector: 'detalle-cliente',
@@ -24,7 +26,9 @@ export class DetalleComponent implements OnInit{
 
   urlImagenEndPoint:string = this.clienteService.urlverImagenEndPoint;
   progreso:number = 0;
-
+  
+  // Objeto para poblar la tabla dentro de detalle.component.html
+  facturas: Factura[];
 
   constructor(private clienteService: ClienteService,
     private router:Router,
@@ -33,7 +37,18 @@ export class DetalleComponent implements OnInit{
   }
 
   ngOnInit(): void {
-
+    
+    // Se carga las facturas asociadas a un producto    
+   this.clienteService.idClienteSeleccionado$.subscribe((idCliente) => {
+      if (idCliente !== null) {
+        this.listarFacturaAsociadaCliente(idCliente);
+      }
+    });
+   /*     
+    if(this.clienteService.idClienteSeleccionadoSource != null) {
+      this.listarFacturaAsociadaCliente(this.clienteService.idClienteSeleccionadoSource);
+    }
+    */ 
   }
 
   seleccionarFoto(event){
@@ -76,6 +91,25 @@ export class DetalleComponent implements OnInit{
       this.imagenSeleccionada = null;
       this.progreso = 0;
       //this.modalImg.nativeElement.hidden = true;
+    }
+
+    /**
+     * Función encargada de recibir el id del cliente/producto y obtener el listdo de Facturas 
+     * @param id 
+     */
+    listarFacturaAsociadaCliente(id: number) {
+      this.clienteService.obtenerFacturasPorId(id).subscribe({
+        next: (facturasRecibidas) => {
+          console.log("Recibiendo la factura con el", facturasRecibidas);
+          this.facturas = facturasRecibidas;
+        },
+        error: (error) => {
+          console.error('Error al obtener las facturas:', error);
+        },
+        complete: () => {
+          // Código que se ejecuta cuando la operación está completa
+        },
+      });
     }
 
 }

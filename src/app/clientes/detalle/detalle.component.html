@@ -35,6 +35,32 @@
                         </div>
                     </div>
                 </div>
+
+                <div *ngIf="facturas.length == 0" class="alert alert-info my-4">
+                    No hay facturas asignadas para el cliente
+                </div>
+
+                <div class="row">
+                    <table *ngIf="facturas.length > 0" class="table table-bordered table-striped my-4">
+                        <thead>
+                            <tr>
+                                <th>Factura</th>
+                                <th>Descripcion</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                            <tbody>
+                                <tr *ngFor="let factura of facturas">
+                                    <td>{{factura.id}}</td>
+                                    <td>{{factura.descripcion}}</td>
+                                    <td>{{factura.createAt}}</td>
+                                    <td>{{factura.total}}</td>
+                                </tr>
+                            </tbody>
+                    </table>
+                </div>
+                
             </div>
             <div class="modal-footer">
             <button (click)="cerrarModal()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
