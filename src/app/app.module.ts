@@ -23,7 +23,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 // Agregamos modulo para los formularios
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DetalleComponent } from './clientes/detalle/detalle.component';
 import { LoginComponent } from './usuarios/login.component';
@@ -32,9 +32,11 @@ import { RoleGuard } from './usuarios/guards/role.guard';
 import { TokenInterceptor } from './usuarios/interceptors/token.interceptor';
 import { AuthInterceptor } from './usuarios/interceptors/auth.interceptor';
 import { DetalleFacturaComponent } from './facturas/detalle-factura.component';
+import { FacturasComponent } from './facturas/facturas.component';
 
-
-
+// import para trabajar con el autocomplete de angular material
+import {MatAutocompleteModule} from '@angular/material/autocomplete'; 
+import {MatFormFieldModule} from '@angular/material/form-field'; 
 
 /* ########################################################################################################################################################################## */
 /* ########################################################################################################################################################################## */
@@ -57,7 +59,8 @@ const routes: Routes = [
   {path: 'crear/clientes', component: FormComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'ROLE_ADMIN'} },
   {path: 'editar/clientes/:id', component: FormComponent, canActivate: [AuthGuard, RoleGuard], data: { role: 'ROLE_ADMIN'} },
   {path: 'login', component: LoginComponent},
-  {path: 'facturas/:id', component: DetalleFacturaComponent}
+  {path: 'facturas/:id', component: DetalleFacturaComponent},
+  {path: 'facturas/form/:clienteId', component: FacturasComponent}
 
 ];
 
@@ -74,7 +77,8 @@ const routes: Routes = [
     DetalleComponent,
     DetalleComponent,
     LoginComponent,
-    DetalleFacturaComponent
+    DetalleFacturaComponent,
+    FacturasComponent
   ],
   imports: [
     // Dispone de las directivos *ng:if, *ng:for, etc....
@@ -89,7 +93,10 @@ const routes: Routes = [
     // Se importa librerías necesarias para trabajar con el datapicker de angular material
     MatInputModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatFormFieldModule
   ],
   /**
    *  Se registra clase de Servicio con lógica de negocio dentro 'providers', en las versiones actualizadas ya no hace falta registrarlo.

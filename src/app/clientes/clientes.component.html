@@ -24,6 +24,7 @@
                 <th>Region</th>
                 <th>Editar un Producto</th>
                 <th *ngIf="authService.verificarRol('ROLE_ADMIN')">Eliminar un Producto</th>
+                <th>Crear Factura </th>
             </tr>
         </thead>
         <tbody>
@@ -46,6 +47,9 @@
               </td>
               <td *ngIf="authService.verificarRol('ROLE_ADMIN')">
                 <button type="button" class="btn btn-primary" name="eliminar" (click)="delete(cliente)"> Eliminar Producto</button>
+              </td>
+              <td>
+                <button (click)="onEditClick()" id="botonCrearFactura" type="button" class="btn btn-success" name="crear" [routerLink]="['/facturas/form/',cliente.id]">Crear Factura</button>
               </td>
             </tr>
         </tbody>
