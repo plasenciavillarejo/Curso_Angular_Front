@@ -5,6 +5,7 @@ import { Observable, catchError, of, pipe, throwError } from 'rxjs';
 import { AuthService } from 'src/app/usuarios/auth.service';
 import { Factura } from '../models/factura';
 import Swal from 'sweetalert2';
+import { Cliente } from 'src/app/clientes/cliente';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,9 @@ export class FacturasService implements OnInit {
 
   private urlEndpointFacturas: string = 'http://localhost:8090/api/productos/listar/factura';
   private urlEndpointBorrarFacturas: string = 'http://localhost:8090/api/productos/facturas';
+  private urlEndpointFiltrarProductos: string = 'http://localhost:8090/api/productos/factura/filtrar-productos/';
+  
+
   // Cabeceras http
   private httpHeaders = new HttpHeaders({
     'Content-type': 'application/json'
@@ -42,8 +46,10 @@ export class FacturasService implements OnInit {
         );
       })
     );
-
   }
-
+  // para mi el producto es el cliente para mentener la lógica que tengo creada con los microservicios
+  filtrarProductos(nombre:string): Observable<Cliente[]> {
+    return this.http.get<Cliente[]>(`${this.urlEndpointFiltrarProductos}/${nombre}`);
+  }
 
 }

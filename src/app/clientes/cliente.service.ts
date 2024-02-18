@@ -52,7 +52,7 @@ export class ClienteService {
   urlverImagenEndPoint: string = "http://localhost:8090/api/productos/verImagen/";
   urlProductoSinImagen: string = "http://localhost:8090/images/user.svg"; 
   
-
+  
   // Cabeceras http
   private httpHeaders = new HttpHeaders({
     'Content-type': 'application/json'

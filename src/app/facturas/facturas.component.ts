@@ -3,7 +3,9 @@ import { Factura } from './models/factura';
 import { ClienteService } from '../clientes/cliente.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { Observable, map, startWith } from 'rxjs';
+import { Observable, flatMap, map, mergeMap, startWith } from 'rxjs';
+import { FacturasService } from './services/factura.service';
+import { Cliente } from '../clientes/cliente';
 
 @Component({
   selector: 'app-facturas',
@@ -16,11 +18,11 @@ export class FacturasComponent {
 
   // Propiedades para el autocomplete de angular
   autoCompleteControl = new FormControl('');
-  productos: string[] = ['One', 'Two', 'Three'];
-  productosFiltrados: Observable<string[]>;
+  productosFiltrados: Observable<Cliente[]>;
 
   // Inyectamos los componentes necesarios para trabjar con ellos
   constructor(private clienteService: ClienteService,
+    private facturaService: FacturasService,
     private activatedRoute: ActivatedRoute) {
 
   }
@@ -41,15 +43,23 @@ export class FacturasComponent {
     // Clase para el autocomplete de angular
     this.productosFiltrados = this.autoCompleteControl.valueChanges
       .pipe(
-        startWith(''),
-        map(value => this.filtradoProducto(value || '')),
-    );    
+        // Esté código me da error de que no encuentra el nombre dentro de cliente, la solución en la siguiente línea
+        //map(value => typeof value === 'string' ? value : value.nombre),
+        map((value:any) => typeof value ==='string'? value: value.nombre),        
+        // Debemos aplanar este observable para poder pasarlos utlizando el flatMap -> Está deprecated, utilizar en su lugar mergeMap
+        mergeMap(value => value ? this.filtradoProducto(value): []),
+    );        
   }
 
+
   // Clase para el autocomplete de angular
-  private filtradoProducto(value: string): string[] {
+  private filtradoProducto(value: string): Observable<Cliente[]> {
     const filterValue = value.toLowerCase();
-    return this.productos.filter(option => option.toLowerCase().includes(filterValue));
+    return this.facturaService.filtrarProductos(filterValue);
+  }
+
+  mostrarNombre(producto?: Cliente): string | undefined {
+    return producto ? producto.nombre : undefined;
   }
 
 }

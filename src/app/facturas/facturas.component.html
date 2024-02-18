@@ -39,10 +39,11 @@
                                matInput
                                [formControl]="autoCompleteControl"
                                [matAutocomplete]="auto">
-                        <mat-autocomplete #auto="matAutocomplete">
+                               <!-- Definimos la función para mostrar el nombre del productos => [displayWith] -->
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarNombre">
                             <!-- Utilizamos el pike '|' asyns por que estamos iterando un observable en vez de una lista  -->
                             <mat-option *ngFor="let producto of productosFiltrados | async" [value]="producto">
-                                {{ producto }}
+                                {{ producto.nombre }}
                             </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>
