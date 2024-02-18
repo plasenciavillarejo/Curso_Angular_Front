@@ -39,8 +39,10 @@
                                matInput
                                [formControl]="autoCompleteControl"
                                [matAutocomplete]="auto">
-                               <!-- Definimos la función para mostrar el nombre del productos => [displayWith] -->
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarNombre">
+                               <!-- Definimos la función para mostrar el nombre del productos => [displayWith] 
+                                (optionSelect) => se le pasa el producto seleccionado  
+                            -->
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarNombre" (optionSelected)="seleccionarProducto($event)">
                             <!-- Utilizamos el pike '|' asyns por que estamos iterando un observable en vez de una lista  -->
                             <mat-option *ngFor="let producto of productosFiltrados | async" [value]="producto">
                                 {{ producto.nombre }}
@@ -49,7 +51,37 @@
                     </mat-form-field>
                 </div>
             </div>
-                    
+
+            <!-- table-sm es para una tabla pequeña-->
+            <table class="table table-striped table-hover table-sm"> 
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of factura.items">
+                        <td>{{item.producto.nombre}}</td>
+                        <td>{{item.producto.precio}}</td>
+                        <td>
+                            <input type="number" value ="{{item.cantidad}}" class="form-control col-sm-4" (change)="actualizarCantidad(item.producto.id, $event)"/>
+                        </td>
+                        <td>{{item.calcularImporte()}}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" type="button" (click)="eliminarItemFactura(item.producto.id)">Eliminar Item Factura</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5 class="float-sm-end fs-4">Total Factura: 
+                <span class="badge text-bg-dark" style="margin-right: 9px;">{{factura.calcularTotalFactura()}}</span> 
+            </h5>
+
             <div class="form-group row mt-3 mb-3">
                 <div class="col-sm-6">
                     <input type="submit" value="Crear Factura" class="btn btn-secondary">
