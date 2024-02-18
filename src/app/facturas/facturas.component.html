@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-header bg-primary text-white">{{titulo}} : {{factura[0].descripcion}}</div>
+    <div class="card-header bg-primary text-white">{{titulo}} : {{factura.descripcion}}</div>
     <div class="car-body">
         <h4 class="card-title">
             <a [routerLink]="['/clientes']" class=" btn bnt-light btn-xs">&laquo; volver</a>
@@ -9,7 +9,7 @@
             <div class="form-group row">
                 <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>                 
                 <div class="col-sm-6">
-                    <input type="text" name="cliente" class="form-control" value="{{factura.descripcion}}" disabled/>
+                    <input type="text" name="cliente" class="form-control" value="Valor por defecto en prueba factura" disabled/>
                 </div>
             </div>
 
@@ -26,26 +26,29 @@
                     <textarea name="observacion" class="form-control"  [(ngModel)]="factura.observacion"> </textarea>
                 </div>
             </div>
-
+            
+            <!-- Autocomplete de Angular -->
+            <!-- ####################### -->
             <div class="form-group row mt-3">
                 <div class="col-sm-6">
                     <mat-form-field class="example-full-width">
-                        <mat-label>Number</mat-label>
+                        <mat-label>Añadir Producto</mat-label>
                         <input type="text"
-                            placeholder="Pick one"
-                            aria-label="Number"
-                            matInput
-                            [formControl]="myControl"
-                            [matAutocomplete]="auto">
+                               placeholder=""
+                               aria-label="producto"
+                               matInput
+                               [formControl]="autoCompleteControl"
+                               [matAutocomplete]="auto">
                         <mat-autocomplete #auto="matAutocomplete">
-                        @for (option of filteredOptions | async; track option) {
-                            <mat-option [value]="option">{{option}}</mat-option>
-                        }
+                            <!-- Utilizamos el pike '|' asyns por que estamos iterando un observable en vez de una lista  -->
+                            <mat-option *ngFor="let producto of productosFiltrados | async" [value]="producto">
+                                {{ producto }}
+                            </mat-option>
                         </mat-autocomplete>
                     </mat-form-field>
+                </div>
             </div>
-            </div>
-
+                    
             <div class="form-group row mt-3 mb-3">
                 <div class="col-sm-6">
                     <input type="submit" value="Crear Factura" class="btn btn-secondary">

@@ -14,9 +14,10 @@ export class FacturasComponent {
   titulo: string = 'Nueva Factura';
   factura:Factura = new Factura();
 
-  myControl = new FormControl('');
-  options: string[] = ['One', 'Two', 'Three'];
-  filteredOptions: Observable<string[]>;
+  // Propiedades para el autocomplete de angular
+  autoCompleteControl = new FormControl('');
+  productos: string[] = ['One', 'Two', 'Three'];
+  productosFiltrados: Observable<string[]>;
 
   // Inyectamos los componentes necesarios para trabjar con ellos
   constructor(private clienteService: ClienteService,
@@ -31,23 +32,24 @@ export class FacturasComponent {
       // Recibe el clienteId que hemos indicado dentro del app.module.ts dentro de las rutas definidas
       let clienteId = + params.get('clienteId');
 
-      // Ahora obtenemos el cliente
-      this.clienteService.getCliente(clienteId).subscribe(cliente => {
-        
+      // Ahora obtenemos el cliente ( En este caso nosotros no trabajos con cliente si no con producto y no está asociado a ningúna factura.)
+      this.clienteService.obtenerFacturasPorId(clienteId).subscribe(factura => {
+        // this.factura = factura[0];
       });
     })
-   
-    this.filteredOptions = this.myControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '')),
-    );
+    
+    // Clase para el autocomplete de angular
+    this.productosFiltrados = this.autoCompleteControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this.filtradoProducto(value || '')),
+    );    
+  }
 
-    private _filter(value: string): string[] {
-      const filterValue = value.toLowerCase();
-  
-      return this.options.filter(option => option.toLowerCase().includes(filterValue));
-    }
-
+  // Clase para el autocomplete de angular
+  private filtradoProducto(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.productos.filter(option => option.toLowerCase().includes(filterValue));
   }
 
 }
