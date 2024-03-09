@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { Factura } from './models/factura';
 import { ClienteService } from '../clientes/cliente.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { Observable, flatMap, map, mergeMap, startWith } from 'rxjs';
 import { FacturasService } from './services/factura.service';
 import { Cliente } from '../clientes/cliente';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { ItemFactura } from './models/item-factura';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-facturas',
@@ -25,7 +26,8 @@ export class FacturasComponent {
   // Inyectamos los componentes necesarios para trabjar con ellos
   constructor(private clienteService: ClienteService,
     private facturaService: FacturasService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private router: Router) {
 
   }
 
@@ -139,9 +141,14 @@ export class FacturasComponent {
       console.log("Id Recibido: " + id + " Id del producto: " + item.producto.id);
       return id !== item.producto.id;
     });
-
     console.log('Nuevo array contiene: ' + this.factura.items.length + ' elementos');
+  }
 
+  crearFactura():void {
+    this.facturaService.crearFactura(this.factura).subscribe(factura => {
+      Swal.fire(this.titulo, `Facutura ${factura.descripcion} creada con éxito!`,`success`);
+      this.router.navigate(['/clientes']);
+    });
   }
 
 }

@@ -15,6 +15,7 @@ export class FacturasService implements OnInit {
   private urlEndpointFacturas: string = 'http://localhost:8090/api/productos/listar/factura';
   private urlEndpointBorrarFacturas: string = 'http://localhost:8090/api/productos/facturas';
   private urlEndpointFiltrarProductos: string = 'http://localhost:8090/api/productos/factura/filtrar-productos/';
+  private urlEndpointCrearFacturas: string = 'http://localhost:8090/api/productos/factura/crear';
   
 
   // Cabeceras http
@@ -52,4 +53,12 @@ export class FacturasService implements OnInit {
     return this.http.get<Cliente[]>(`${this.urlEndpointFiltrarProductos}/${nombre}`);
   }
 
+  crearFactura(factura:Factura): Observable<Factura> {
+    return this.http.post<Factura>(this.urlEndpointCrearFacturas, factura);
+  }
+
+
+
+
+  
 }
