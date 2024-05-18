@@ -48,6 +48,8 @@
                                 <th>Descripcion</th>
                                 <th>Fecha</th>
                                 <th>Total</th>
+                                <th>Detalle Factura</th>
+                                <th>Eliminar Factura</th>
                             </tr>
                         </thead>
                             <tbody>
@@ -56,6 +58,13 @@
                                     <td>{{factura.descripcion}}</td>
                                     <td>{{factura.createAt}}</td>
                                     <td>{{factura.total}}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" type="button"
+                                        [routerLink]="['/facturas',factura.id]">ver</button>
+                                    </td>
+                                    <td> 
+                                        <button class="btn btn-danger btn-sm" type="button" (click)="delete(factura)">Eliminar</button>
+                                    </td>
                                 </tr>
                             </tbody>
                     </table>

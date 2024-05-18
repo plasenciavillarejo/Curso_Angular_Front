@@ -7,6 +7,7 @@ import { HttpEventType } from '@angular/common/http';
 import { ModalService } from './modal.service';
 import { Factura } from 'src/app/facturas/models/factura';
 import { ClientesComponent } from '../clientes.component';
+import { FacturasService } from 'src/app/facturas/services/factura.service';
 
 @Component({
   selector: 'detalle-cliente',
@@ -32,7 +33,8 @@ export class DetalleComponent implements OnInit{
 
   constructor(private clienteService: ClienteService,
     private router:Router,
-    public modalService: ModalService) {
+    public modalService: ModalService,
+    private facturaService: FacturasService) {
 
   }
 
@@ -111,5 +113,33 @@ export class DetalleComponent implements OnInit{
         },
       });
     }
+
+    // Borrar Factura
+    public delete(factura:Factura):void {
+      Swal.fire({
+        title: 'Estás seguro?',
+        text: `¿Seguro que desea eliminar la factura ${factura}`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Aceptar!'
+      }).then((result) => {
+        if (result.value) {
+          this.facturaService.borrarFactura(factura.id).subscribe(
+            () => {
+              /* filter() -> Vamos a quitar la factura que estamos eliminado del cliente*/
+              this.cliente.facturas = this.cliente.facturas.filter(facturaRecibida => facturaRecibida != factura)
+              Swal.fire(
+                `Facutura eliminada!`,
+                `Factura ${factura.descripcion} eliminada con éxito`,
+                `success`
+              )
+            }
+          )
+        }
+      })
+    }
+    
 
 }
